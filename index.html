@@ -3,243 +3,301 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Relatório de Custo Estimado – Uso da API Gemini</title>
-    <!-- Tailwind CSS CDN -->
+    <title>Sistema Inteligente de Análise de Causa Raiz (RCA)</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Google Fonts - Inter -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #f3f4f6; /* Light gray background */
-            color: #1f2937; /* Dark gray text */
         }
-        .container {
-            max-width: 90%; /* Responsive width */
-            margin: 2rem auto;
-            padding: 1.5rem;
-            background-color: #ffffff; /* White background for the card */
-            border-radius: 0.75rem; /* Rounded corners */
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+        .flow-line {
+            position: absolute;
+            height: 2px;
+            background-color: #D1D5DB; /* gray-300 */
+            z-index: 0;
         }
-        h1 {
-            border-bottom: 2px solid #e5e7eb; /* Light gray border for separation */
-            padding-bottom: 0.75rem;
-            margin-bottom: 1.5rem;
+        .flow-arrow {
+            color: #D1D5DB;
         }
-        h2 {
-            margin-top: 1.5rem;
-            margin-bottom: 1rem;
-            color: #111827; /* Slightly darker heading */
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 1rem;
-        }
-        th, td {
-            padding: 0.75rem;
-            text-align: left;
-            border-bottom: 1px solid #e5e7eb;
-        }
-        th {
-            background-color: #f9fafb; /* Lighter background for table headers */
-            font-weight: 600;
-            color: #374151;
-        }
-        tr:last-child td {
-            border-bottom: none;
-        }
-        .total-row {
-            font-weight: 700;
-            background-color: #e0f2fe; /* Light blue for total row */
-        }
-        ul {
-            list-style: disc;
-            margin-left: 1.5rem;
-            margin-top: 0.5rem;
-        }
-        a {
-            color: #2563eb; /* Blue links */
-            text-decoration: none;
-        }
-        a:hover {
-            text-decoration: underline;
+        .modal {
+            transition: opacity 0.3s ease;
         }
     </style>
 </head>
-<body class="p-4 sm:p-6 md:p-8">
-    <div class="container">
-        <h1 class="text-2xl sm:text-3xl font-bold text-gray-900 mb-4 pb-3 border-b-2 border-gray-200 rounded-md">
-            📊 Relatório de Custo Estimado – Uso da API Gemini (Enterprise)
-        </h1>
-        <p class="text-sm text-gray-500 mb-6">
-            <span class="font-semibold">Data da Simulação:</span> 10/07/2025 14:06:11
-        </p>
+<body class="bg-slate-50 text-slate-800">
 
-        <hr class="my-6 border-gray-300">
-
-        <h2 class="text-xl sm:text-2xl font-semibold text-gray-800 mb-4">
-            🧠 Contexto
-        </h2>
-        <p class="text-gray-700 leading-relaxed mb-6">
-            Este relatório resume os custos estimados para o uso da API <strong class="font-medium">Gemini 2.5 Pro (Enterprise)</strong> em uma aplicação que realiza análises automatizadas de falhas industriais, com base em tokens processados.
-        </p>
-        <p class="text-gray-700 leading-relaxed mb-6">
-            A simulação considera o uso <strong class="font-medium">sem contexto salvo (context caching)</strong> e assume que o modelo <strong class="font-medium">Gemini Pro</strong> está sendo usado em ambiente corporativo, via <strong class="font-medium">API da Google Cloud</strong>.
-        </p>
-
-        <hr class="my-6 border-gray-300">
-
-        <h2 class="text-xl sm:text-2xl font-semibold text-gray-800 mb-4">
-            💼 Diferença entre os modelos Gemini
-        </h2>
-        <div class="overflow-x-auto rounded-lg shadow-sm">
-            <table class="min-w-full bg-white rounded-lg">
-                <thead>
-                    <tr>
-                        <th class="py-3 px-4 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider rounded-tl-lg">Opção</th>
-                        <th class="py-3 px-4 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Descrição</th>
-                        <th class="py-3 px-4 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider rounded-tr-lg">Cobrança</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-gray-200">
-                    <tr>
-                        <td class="py-3 px-4 whitespace-nowrap"><strong>Gemini Business/Enterprise</strong></td>
-                        <td class="py-3 px-4">Uso integrado ao Gmail, Docs, Drive e outros apps Google Workspace</td>
-                        <td class="py-3 px-4 whitespace-nowrap">Por usuário/mês</td>
-                    </tr>
-                    <tr>
-                        <td class="py-3 px-4 whitespace-nowrap"><strong>Gemini API (via Cloud)</strong></td>
-                        <td class="py-3 px-4">Uso programático por API para aplicações personalizadas e sistemas internos</td>
-                        <td class="py-3 px-4 whitespace-nowrap">Por tokens</td>
-                    </tr>
-                </tbody>
-            </table>
+    <!-- Navigation Bar -->
+    <nav class="bg-slate-800 p-4 shadow-lg">
+        <div class="container mx-auto flex justify-center space-x-8">
+            <a href="index.html" class="text-white text-lg font-semibold px-4 py-2 rounded-md bg-amber-500 hover:bg-amber-600 transition-colors">A Solução</a>
+            <a href="relatorio_custo.html" class="text-slate-300 text-lg font-medium px-4 py-2 rounded-md hover:bg-slate-700 transition-colors">Relatório de Custo</a>
+            <a href="como_implementar.html" class="text-slate-300 text-lg font-medium px-4 py-2 rounded-md hover:bg-slate-700 transition-colors">Como Implementar</a>
         </div>
-        <p class="text-gray-700 leading-relaxed mt-4 mb-6">
-            O custo abaixo refere-se <strong class="font-medium">exclusivamente ao uso da API Gemini 2.5 Pro</strong>, via <strong class="font-medium">Google Cloud Vertex AI</strong>, e não exige plano Workspace.
-        </p>
+    </nav>
 
-        <hr class="my-6 border-gray-300">
+    <div class="container mx-auto px-4 py-12">
 
-        <h2 class="text-xl sm:text-2xl font-semibold text-gray-800 mb-4">
-            🔧 Cenário Simulado
-        </h2>
-        <ul class="list-disc list-inside text-gray-700 space-y-2 mb-6">
-            <li><strong class="font-medium">Modelo:</strong> Gemini 2.5 Pro</li>
-            <li><strong class="font-medium">Análises por dia:</strong> 60</li>
-            <li><strong class="font-medium">Dias por mês:</strong> 30</li>
-            <li><strong class="font-medium">Total de análises mensais:</strong> 1.800</li>
-        </ul>
+        <!-- Header Section -->
+        <header class="text-center mb-16">
+            <h1 class="text-4xl md:text-5xl font-bold text-slate-900">Sistema Inteligente de Análise de Causa Raiz (RCA)</h1>
+            <p class="mt-4 text-lg text-slate-600 max-w-3xl mx-auto">Um assistente especialista projetado para capacitar nossos engenheiros, transformando dados brutos em insights acionáveis de forma rápida, padronizada e inteligente.</p>
+        </header>
 
-        <hr class="my-6 border-gray-300">
+        <!-- Interactive Workflow Section -->
+        <section id="workflow" class="mb-20">
+            <h2 class="text-3xl font-bold text-center mb-12">O Fluxo de Trabalho Inteligente</h2>
+            <div class="relative flex flex-col md:flex-row justify-between items-center w-full max-w-6xl mx-auto">
+                
+                <!-- Lines for desktop view -->
+                <div class="hidden md:block flow-line top-1/2 left-0 w-full" style="transform: translateY(-50%);"></div>
 
-        <h2 class="text-xl sm:text-2xl font-semibold text-gray-800 mb-4">
-            🔢 Simulação: 20k tokens de input e 10k tokens de output por análise
-        </h2>
-        <div class="overflow-x-auto rounded-lg shadow-sm">
-            <table class="min-w-full bg-white rounded-lg">
-                <thead>
-                    <tr>
-                        <th class="py-3 px-4 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider rounded-tl-lg">Tipo de token</th>
-                        <th class="py-3 px-4 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tokens/mês</th>
-                        <th class="py-3 px-4 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Custo por milhão</th>
-                        <th class="py-3 px-4 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider rounded-tr-lg">Custo total</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-gray-200">
-                    <tr>
-                        <td class="py-3 px-4 whitespace-nowrap">Entrada</td>
-                        <td class="py-3 px-4 whitespace-nowrap">36,000,000</td>
-                        <td class="py-3 px-4 whitespace-nowrap">US$ 1,25</td>
-                        <td class="py-3 px-4 whitespace-nowrap">US$ 45.00</td>
-                    </tr>
-                    <tr>
-                        <td class="py-3 px-4 whitespace-nowrap">Saída</td>
-                        <td class="py-3 px-4 whitespace-nowrap">18,000,000</td>
-                        <td class="py-3 px-4 whitespace-nowrap">US$ 10,00</td>
-                        <td class="py-3 px-4 whitespace-nowrap">US$ 180.00</td>
-                    </tr>
-                    <tr class="total-row">
-                        <td class="py-3 px-4 whitespace-nowrap font-bold">Total</td>
-                        <td class="py-3 px-4 whitespace-nowrap font-bold">—</td>
-                        <td class="py-3 px-4 whitespace-nowrap font-bold">—</td>
-                        <td class="py-3 px-4 whitespace-nowrap font-bold">US$ 225.00</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
+                <!-- Workflow Steps -->
+                <div class="workflow-step-container flex flex-col md:flex-row justify-between w-full z-10">
+                    <!-- Step 1 -->
+                    <div class="workflow-step flex flex-col items-center text-center p-4 md:w-1/5" data-step="1">
+                        <div class="flex items-center justify-center w-20 h-20 bg-white border-4 border-amber-400 rounded-full shadow-lg cursor-pointer transform hover:scale-110 transition-transform">
+                            <span class="text-3xl">📥</span>
+                        </div>
+                        <h3 class="mt-4 font-semibold">Coleta de Dados</h3>
+                    </div>
+                    
+                    <!-- Arrow 1 -->
+                    <div class="flex items-center justify-center text-3xl flow-arrow md:w-auto -my-4 md:my-0">↓</div>
 
-        <hr class="my-6 border-gray-300">
+                    <!-- Step 2 -->
+                    <div class="workflow-step flex flex-col items-center text-center p-4 md:w-1/5" data-step="2">
+                        <div class="flex items-center justify-center w-20 h-20 bg-white border-4 border-amber-400 rounded-full shadow-lg cursor-pointer transform hover:scale-110 transition-transform">
+                             <span class="text-3xl">🖼</span>
+                        </div>
+                        <h3 class="mt-4 font-semibold">Análise de Mídias</h3>
+                    </div>
 
-        <h2 class="text-xl sm:text-2xl font-semibold text-gray-800 mb-4">
-            🚀 Como Requisitar uma Conta Gemini Enterprise
-        </h2>
-        <p class="text-gray-700 leading-relaxed mb-4">
-            A aquisição e implantação de uma conta Gemini Enterprise, especialmente para uso via API no Google Cloud Vertex AI, envolve um processo que requer coordenação interna, principalmente com o departamento de Tecnologia da Informação (TI) da empresa.
-        </p>
+                    <!-- Arrow 2 -->
+                    <div class="flex items-center justify-center text-3xl flow-arrow md:w-auto -my-4 md:my-0">↓</div>
 
-        <h3 class="text-lg sm:text-xl font-semibold text-gray-800 mb-3">
-            Passos para a Requisição:
-        </h3>
-        <ol class="list-decimal list-inside text-gray-700 space-y-3 mb-6">
-            <li>
-                <strong class="font-medium">Contato Inicial com Vendas Google Cloud:</strong>
-                <p class="ml-4 mt-1">O primeiro passo é <a href="https://cloud.google.com/contact/form?hl=pt_br" target="_blank" class="text-blue-600 hover:text-blue-800">entrar em contato com a equipe de vendas do Google</a>. Eles poderão fornecer informações detalhadas sobre os planos Enterprise, preços personalizados e opções de suporte. É importante comunicar claramente o caso de uso (análise de falhas industriais) e o volume estimado de tokens.</p>
-            </li>
-            <li>
-                <strong class="font-medium">Envolvimento do Departamento de TI Local:</strong>
-                <p class="ml-4 mt-1">A equipe de TI será fundamental em diversas etapas do processo:</p>
-                <ul class="list-disc list-inside ml-8 mt-2 space-y-1">
-                    <li><strong class="font-medium">Segurança e Compliance:</strong> A TI avaliará as políticas de segurança e compliance do Google Cloud para garantir que estejam alinhadas com as diretrizes internas da empresa. Isso inclui revisão de criptografia de dados, controle de acesso e auditoria.</li>
-                    <li><strong class="font-medium">Integração de Sistemas:</strong> Eles auxiliarão na integração da API Gemini com os sistemas existentes da empresa (e.g., sistemas de monitoramento, bancos de dados de falhas). Isso pode envolver a configuração de APIs, autenticação e gerenciamento de credenciais.</li>
-                    <li><strong class="font-medium">Infraestrutura e Rede:</strong> A TI garantirá que a infraestrutura de rede da empresa esteja preparada para o tráfego de dados gerado pelo uso da API, incluindo largura de banda e configurações de firewall.</li>
-                    <li><strong class="font-medium">Gerenciamento de Custos e Orçamento:</strong> Em conjunto com a área financeira, a TI pode ajudar a monitorar e otimizar os custos de uso da API, além de garantir que o orçamento esteja alinhado com as despesas estimadas.</li>
-                    <li><strong class="font-medium">Suporte e Resolução de Problemas:</strong> A TI será o ponto de contato primário para qualquer problema técnico ou necessidade de suporte relacionada à API Gemini.</li>
-                </ul>
-            </li>
-            <li>
-                <strong class="font-medium">Definição de Requisitos Técnicos e Contratuais:</strong>
-                <p class="ml-4 mt-1">Trabalhe em conjunto com o Google Cloud e a TI para definir os requisitos técnicos (e.g., latência, throughput, regiões de implantação) e revisar os termos contratuais, incluindo SLAs (Service Level Agreements) e condições de uso.</p>
-            </li>
-            <li>
-                <strong class="font-medium">Configuração e Implantação:</strong>
-                <p class="ml-4 mt-1">Após a aprovação e contratação, a TI será responsável pela configuração do ambiente no Google Cloud Vertex AI, criação de projetos, gerenciamento de permissões e implantação inicial da aplicação que consumirá a API Gemini.</p>
-            </li>
-        </ol>
+                    <!-- Step 3 -->
+                    <div class="workflow-step flex flex-col items-center text-center p-4 md:w-1/5" data-step="3">
+                        <div class="flex items-center justify-center w-20 h-20 bg-white border-4 border-amber-400 rounded-full shadow-lg cursor-pointer transform hover:scale-110 transition-transform">
+                           <span class="text-3xl">📚</span>
+                        </div>
+                        <h3 class="mt-4 font-semibold">Busca RAG</h3>
+                    </div>
+                    
+                    <!-- Arrow 3 -->
+                    <div class="flex items-center justify-center text-3xl flow-arrow md:w-auto -my-4 md:my-0">↓</div>
 
-        <h3 class="text-lg sm:text-xl font-semibold text-gray-800 mb-3">
-            Considerações Importantes para o TI:
-        </h3>
-        <ul class="list-disc list-inside text-gray-700 space-y-2 mb-6">
-            <li><strong class="font-medium">Governança de Dados:</strong> Onde os dados serão processados e armazenados? Há requisitos de residência de dados?</li>
-            <li><strong class="font-medium">Controle de Acesso:</strong> Como as credenciais da API serão gerenciadas e quem terá acesso a elas?</li>
-            <li><strong class="font-medium">Monitoramento e Alertas:</strong> Como o uso e o desempenho da API serão monitorados para evitar surpresas de custo ou problemas de serviço?</li>
-            <li><strong class="font-medium">Escalabilidade:</strong> A solução proposta é escalável para atender ao crescimento futuro da demanda?</li>
-            <li><strong class="font-medium">Suporte e Treinamento:</strong> Quais são os níveis de suporte oferecidos pelo Google e quais treinamentos serão necessários para a equipe de TI e desenvolvedores?</li>
-        </ul>
+                    <!-- Step 4 -->
+                    <div class="workflow-step flex flex-col items-center text-center p-4 md:w-1/5" data-step="4">
+                        <div class="flex items-center justify-center w-20 h-20 bg-white border-4 border-amber-400 rounded-full shadow-lg cursor-pointer transform hover:scale-110 transition-transform">
+                            <span class="text-3xl">🧠</span>
+                        </div>
+                        <h3 class="mt-4 font-semibold">Análise da IA</h3>
+                    </div>
 
-        <hr class="my-6 border-gray-300">
+                    <!-- Arrow 4 -->
+                    <div class="flex items-center justify-center text-3xl flow-arrow md:w-auto -my-4 md:my-0">↓</div>
 
-        <h2 class="text-xl sm:text-2xl font-semibold text-gray-800 mb-4">
-            ℹ Observações
-        </h2>
-        <ul class="list-disc list-inside text-gray-700 space-y-2 mb-6">
-            <li>O modelo <strong class="font-medium">Gemini 2.5 Pro</strong> é robusto, adequado para tarefas complexas e análises detalhadas.</li>
-            <li>Não foi utilizado contexto salvo (<strong class="font-medium">context caching</strong>), o que poderia reduzir os custos em prompts repetitivos.</li>
-            <li>O custo pode variar com base no volume de tokens, modelo utilizado (Pro, Flash, Flash Lite) e recursos adicionais.</li>
-        </ul>
+                    <!-- Step 5 -->
+                    <div class="workflow-step flex flex-col items-center text-center p-4 md:w-1/5" data-step="5">
+                        <div class="flex items-center justify-center w-20 h-20 bg-white border-4 border-amber-400 rounded-full shadow-lg cursor-pointer transform hover:scale-110 transition-transform">
+                            <span class="text-3xl">📄</span>
+                        </div>
+                        <h3 class="mt-4 font-semibold">Geração de Relatório</h3>
+                    </div>
+                </div>
+            </div>
+        </section>
 
-        <hr class="my-6 border-gray-300">
+        <!-- Prompt Engineering Section -->
+        <section id="prompts" class="mb-20">
+            <h2 class="text-3xl font-bold text-center mb-4">A Inteligência por Trás do Processo</h2>
+            <p class="text-center text-slate-600 mb-12 max-w-3xl mx-auto">Resultados de alta qualidade são garantidos por uma estratégia de Engenharia de Prompts com 4 pilares fundamentais.</p>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <!-- Pillar 1 -->
+                <div class="bg-white p-6 rounded-lg shadow-md hover:shadow-xl transition-shadow">
+                    <div class="text-3xl mb-3">🧑‍🔧</div>
+                    <h3 class="text-xl font-bold mb-2">Persona de Especialista</h3>
+                    <p class="text-slate-600">Instruímos a IA a atuar como uma especialista em falhas metalúrgicas, ajustando seu "mindset" para nosso contexto técnico.</p>
+                </div>
+                <!-- Pillar 2 -->
+                <div class="bg-white p-6 rounded-lg shadow-md hover:shadow-xl transition-shadow">
+                    <div class="text-3xl mb-3">🧩</div>
+                    <h3 class="text-xl font-bold mb-2">Contexto Rico e Multifacetado</h3>
+                    <p class="text-slate-600">Fornecemos um dossiê completo: dados do Excel, análise de mídias e o histórico de falhas correlacionadas da fábrica.</p>
+                </div>
+                <!-- Pillar 3 -->
+                <div class="bg-white p-6 rounded-lg shadow-md hover:shadow-xl transition-shadow">
+                    <div class="text-3xl mb-3">📏</div>
+                    <h3 class="text-xl font-bold mb-2">Formato Rígido e Instruções</h3>
+                    <p class="text-slate-600">Usamos um formato de resposta obrigatório para garantir que todos os relatórios sejam padronizados e consistentes.</p>
+                </div>
+                <!-- Pillar 4 -->
+                <div class="bg-white p-6 rounded-lg shadow-md hover:shadow-xl transition-shadow">
+                    <div class="text-3xl mb-3">🎓</div>
+                    <h3 class="text-xl font-bold mb-2">Aprendizado pelo Exemplo</h3>
+                    <p class="text-slate-600">O prompt inclui um exemplo de análise bem-sucedida, uma técnica poderosa para guiar a IA ao resultado esperado.</p>
+                </div>
+            </div>
+             <div class="mt-8 text-center bg-amber-100 border-l-4 border-amber-500 text-amber-700 p-4 rounded-md max-w-3xl mx-auto">
+                <p class="font-bold">Diferencial: Prompts em Múltiplos Estágios</p>
+                <p>Utilizamos uma cadeia de prompts especializados (um para visão, um para refinar histórico, um para análise final), simulando um time de especialistas trabalhando em conjunto.</p>
+            </div>
+        </section>
 
-        <h2 class="text-xl sm:text-2xl font-semibold text-gray-800 mb-4">
-            📎 Fontes
-        </h2>
-        <ul class="list-disc list-inside text-gray-700 space-y-2 mb-6">
-            <li><a href="https://ai.google.dev/gemini-api/docs/pricing" target="_blank" class="text-blue-600 hover:text-blue-800">Tabelas de preços da Google AI</a></li>
-            <li><a href="https://cloud.google.com/vertex-ai" target="_blank" class="text-blue-600 hover:text-blue-800">Vertex AI – Google Cloud</a></li>
-        </ul>
+        <!-- Business Value Section -->
+        <section id="value" class="mb-16">
+            <h2 class="text-3xl font-bold text-center mb-12">Ganhos de Valor para o Negócio</h2>
+            <div class="bg-white p-6 rounded-lg shadow-lg">
+                <div class="chart-container relative mx-auto" style="height:400px; max-width:800px;">
+                    <canvas id="valueChart"></canvas>
+                </div>
+            </div>
+        </section>
+
     </div>
+
+    <!-- Modal -->
+    <div id="workflow-modal" class="modal fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 opacity-0 pointer-events-none z-50">
+
+        <div class="bg-white rounded-lg shadow-2xl p-8 max-w-2xl w-full transform -translate-y-10 transition-transform duration-300">
+            <div class="flex justify-between items-center mb-4">
+                <h3 id="modal-title" class="text-2xl font-bold"></h3>
+                <button id="close-modal-btn" class="text-3xl text-slate-500 hover:text-slate-800">&times;</button>
+            </div>
+            <p id="modal-description" class="text-slate-700"></p>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Workflow Modal Logic
+            const modal = document.getElementById('workflow-modal');
+            const modalTitle = document.getElementById('modal-title');
+            const modalDescription = document.getElementById('modal-description');
+            const closeModalBtn = document.getElementById('close-modal-btn');
+            
+            const stepDetails = {
+                1: {
+                    title: "Etapa 1: Coleta de Dados Automatizada",
+                    description: "O processo começa quando o engenheiro aponta para uma pasta contendo as evidências de uma falha. O sistema automaticamente identifica e extrai as informações essenciais: dados do Excel (área, equipamento, descrição) e evidências visuais como fotos e vídeos."
+                },
+                2: {
+                    title: "Etapa 2: Análise de Mídias com IA",
+                    description: "Cada imagem e vídeo é analisado individualmente por um modelo de IA treinado para visão computacional. A IA gera um laudo técnico conciso para cada mídia, descrevendo objetivamente os sinais de falha (ex: corrosão severa, vazamento de fluido)."
+                },
+                3: {
+                    title: "Etapa 3: Busca Aumentada por Geração (RAG)",
+                    description: "Este é o nosso grande diferencial. O sistema consulta o conhecimento acumulado da fábrica. Primeiro, um script de filtro busca todas as falhas no mesmo subgrupo do equipamento. Depois, uma IA intermediária analisa essa lista e seleciona as 3 falhas passadas mais relevantes para o caso atual, entendendo a relação causal."
+                },
+                4: {
+                    title: "Etapa 4: Análise de Causa Raiz com IA Especialista",
+                    description: "O modelo de IA mais poderoso recebe um dossiê completo com os dados do Excel, as análises de mídias e o contexto histórico relevante. Com base neste dossiê, a IA realiza a análise de causa raiz completa, gerando Ishikawa, 5 Porquês e mais."
+                },
+                5: {
+                    title: "Etapa 5: Geração de Relatórios Padronizados",
+                    description: "O sistema gera automaticamente um relatório final em formato Markdown, incluindo Diagrama de Ishikawa, 5 Porquês, Plano de Ação e a Conclusão Final. Este relatório pode ser facilmente compartilhado, arquivado ou convertido."
+                }
+            };
+
+            document.querySelectorAll('.workflow-step').forEach(step => {
+                step.addEventListener('click', () => {
+                    const stepNumber = step.dataset.step;
+                    const details = stepDetails[stepNumber];
+                    modalTitle.textContent = details.title;
+                    modalDescription.textContent = details.description;
+                    modal.classList.remove('opacity-0', 'pointer-events-none');
+                    modal.querySelector('div').classList.remove('-translate-y-10');
+                });
+            });
+
+            const closeModal = () => {
+                modal.classList.add('opacity-0', 'pointer-events-none');
+                modal.querySelector('div').classList.add('-translate-y-10');
+            };
+
+            closeModalBtn.addEventListener('click', closeModal);
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    closeModal();
+                }
+            });
+
+            // Business Value Chart Logic
+            const ctx = document.getElementById('valueChart').getContext('2d');
+            const valueChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Velocidade e Eficiência', 'Padronização e Qualidade', 'Inteligência Aumentada', 'Tomada de Decisão'],
+                    datasets: [{
+                        label: 'Impacto no Negócio',
+                        data: [95, 90, 98, 85], // Representative scores for impact
+                        backgroundColor: [
+                            'rgba(251, 191, 36, 0.6)',
+                            'rgba(59, 130, 246, 0.6)',
+                            'rgba(239, 68, 68, 0.6)',
+                            'rgba(16, 185, 129, 0.6)'
+                        ],
+                        borderColor: [
+                            'rgba(251, 191, 36, 1)',
+                            'rgba(59, 130, 246, 1)',
+                            'rgba(239, 68, 68, 1)',
+                            'rgba(16, 185, 129, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            enabled: true,
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.dataset.label || '';
+                                    if (label) {
+                                        label += ': ';
+                                    }
+                                    const value = context.raw;
+                                    const descriptions = {
+                                        'Velocidade e Eficiência': 'Reduz o tempo de análise de dias para minutos.',
+                                        'Padronização e Qualidade': 'Garante que toda análise siga uma metodologia robusta e consistente.',
+                                        'Inteligência Aumentada': 'Usa o histórico para identificar padrões e causas recorrentes.',
+                                        'Tomada de Decisão': 'Fornece relatórios claros e data-driven para apoiar decisões estratégicas.'
+                                    };
+                                    return descriptions[context.label];
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            beginAtZero: true,
+                            max: 100,
+                            title: {
+                                display: true,
+                                text: 'Nível de Impacto'
+                            }
+                        },
+                        y: {
+                           ticks: {
+                                font: {
+                                    size: 14,
+                                }
+                           }
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+
 </body>
 </html>
